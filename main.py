@@ -55,7 +55,6 @@ class MainWindow(QMainWindow):
 
         self.table.cellClicked.connect(self.cell_clicked)
 
-
     def load_data(self):
         connection = sqlite3.connect("database.db")
         result = connection.execute("SELECT * FROM students")
