@@ -11,6 +11,15 @@ from PyQt6.QtWidgets import QApplication, \
 import sqlite3
 
 
+class DatabaseConnection:
+    def __init__(self, database_file="database.db"):
+        self.database_file = database_file
+
+    def connect(self):
+        connection = sqlite3.connect(self.database_file)
+        return connection
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -53,7 +62,7 @@ class MainWindow(QMainWindow):
         self.table.cellClicked.connect(self.cell_clicked)
 
     def load_data(self):
-        connection = sqlite3.connect("database.db")
+        connection = DatabaseConnection().connect()
         result = connection.execute("SELECT * FROM students")
         self.table.setRowCount(0)
         for row_number, row_data in enumerate(result):
@@ -92,6 +101,7 @@ class MainWindow(QMainWindow):
     def delete(self):
         dialog = DeleteDialog()
         dialog.exec()
+
     def about(self):
         dialog = AboutDialog()
         dialog.exec()
@@ -133,7 +143,7 @@ class InsertDialog(QDialog):
         name = self.student_name.text()
         course = self.course_name.itemText(self.course_name.currentIndex())
         mobile = self.mobile_no.text()
-        connection = sqlite3.connect("database.db")
+        connection = DatabaseConnection().connect()
         cursor = connection.cursor()
         cursor.execute("INSERT INTO students (name, course, mobile) VALUES(?, ?, ?)", (name, course, mobile))
         connection.commit()
@@ -165,7 +175,7 @@ class SearchDialog(QDialog):
 
     def search_student(self):
         name = self.student_name.text()
-        connection = sqlite3.connect("database.db")
+        connection = DatabaseConnection().connect()
         cursor = connection.cursor()
         result = cursor.execute("SELECT * FROM students WHERE name = ?", (name, ))
         items = student_database.table.findItems(name, Qt.MatchFlag.MatchFixedString)
@@ -218,7 +228,7 @@ class EditDialog(QDialog):
         course = self.course_name.itemText(self.course_name.currentIndex())
         mobile = self.mobile_no.text()
         s_id = self.student_id
-        connection = sqlite3.connect("database.db")
+        connection = DatabaseConnection().connect()
         cursor = connection.cursor()
         cursor.execute("UPDATE students SET name = ?, course = ?, "
                        "mobile = ? WHERE ID = ?", (name, course, mobile, s_id))
