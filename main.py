@@ -266,7 +266,7 @@ class DeleteDialog(QDialog):
     def delete_record(self):
         index = student_database.table.currentRow()
         student_id = student_database.table.item(index, 0).text()
-        connection = sqlite3.connect("database.db")
+        connection = DatabaseConnection.connect()
         cursor = connection.cursor()
         cursor.execute("DELETE FROM students WHERE ID= ?", (student_id, ))
         connection.commit()
